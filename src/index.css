@@ -1,0 +1,259 @@
+@import "tailwindcss";
+
+/* Import Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Scheherazade+New:wght@400;700&family=Inter:wght@300;400;500;600;700&display=swap');
+
+@theme {
+  /* Islamic Color Palette */
+  --color-islamic-emerald: #0F3D2E;
+  --color-islamic-emerald-light: #1a5c47;
+  --color-islamic-emerald-dark: #0a2a1f;
+  --color-islamic-navy: #0B1C2D;
+  --color-islamic-navy-light: #162d42;
+  --color-islamic-navy-dark: #060f18;
+  --color-islamic-gold: #D4AF37;
+  --color-islamic-gold-light: #e6c968;
+  --color-islamic-gold-dark: #b8941f;
+  --color-islamic-beige: #F5F1E6;
+  --color-islamic-beige-light: #faf8f0;
+  --color-islamic-beige-dark: #e8e1d0;
+  
+  /* Additional colors */
+  --color-cream-50: #fdfcfb;
+  --color-cream-100: #faf8f5;
+  
+  /* Font families */
+  --font-family-arabic: 'Amiri', 'Scheherazade New', serif;
+  --font-family-body: 'Inter', sans-serif;
+  
+  /* Animations */
+  --animate-fade-in: fade-in 0.8s ease-out;
+  --animate-slide-up: slide-up 0.6s ease-out;
+  --animate-pulse-glow: pulse-glow 3s ease-in-out infinite;
+}
+
+/* Base styles */
+body {
+  background-color: var(--color-islamic-beige);
+  min-height: 100vh;
+  font-family: var(--font-family-body);
+  color: rgb(31 41 55);
+  position: relative;
+}
+
+/* Islamic geometric pattern background */
+body::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: 
+    url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%230F3D2E' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 0;
+}
+
+#root {
+  position: relative;
+  z-index: 1;
+}
+
+/* Custom component classes */
+.islamic-card {
+  background: white;
+  border-radius: 1.5rem;
+  box-shadow: 0 10px 30px rgba(15, 61, 46, 0.08);
+  border: 1px solid rgba(15, 61, 46, 0.1);
+  padding: 1.5rem;
+  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  z-index: 10;
+}
+
+.islamic-card:hover {
+  box-shadow: 0 20px 50px rgba(15, 61, 46, 0.15);
+  border-color: rgba(212, 175, 55, 0.3);
+  transform: translateY(-2px);
+}
+
+.islamic-button {
+  background: linear-gradient(135deg, var(--color-islamic-emerald), var(--color-islamic-emerald-light));
+  color: white;
+  padding: 0.75rem 1.5rem;
+  border-radius: 1rem;
+  font-weight: 500;
+  box-shadow: 0 4px 15px rgba(15, 61, 46, 0.3);
+  transition: all 0.3s ease;
+  border: none;
+  cursor: pointer;
+}
+
+.islamic-button:hover {
+  box-shadow: 0 6px 25px rgba(15, 61, 46, 0.4);
+  transform: translateY(-2px) scale(1.02);
+}
+
+.islamic-button:active {
+  transform: translateY(0) scale(0.98);
+}
+
+.islamic-input {
+  width: 100%;
+  padding: 0.875rem 1rem;
+  border-radius: 1rem;
+  border: 2px solid rgba(15, 61, 46, 0.2);
+  background: white;
+  transition: all 0.3s ease;
+}
+
+.islamic-input:focus {
+  outline: none;
+  border-color: var(--color-islamic-gold);
+  box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.1);
+}
+
+/* Next Prayer Glow Effect */
+.next-prayer-glow {
+  box-shadow: 0 0 30px rgba(212, 175, 55, 0.4), 0 0 60px rgba(212, 175, 55, 0.2);
+  border: 2px solid var(--color-islamic-gold);
+  animation: pulse-glow 3s ease-in-out infinite;
+}
+
+/* Mosque silhouette */
+.mosque-silhouette {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 100'%3E%3Cpath fill='%230F3D2E' opacity='0.05' d='M100 20 L110 40 L120 40 L120 100 L80 100 L80 40 L90 40 Z M100 10 L105 20 L95 20 Z M60 50 L70 60 L70 100 L50 100 L50 60 Z M140 50 L130 60 L130 100 L150 100 L150 60 Z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+}
+
+/* Crescent moon */
+.crescent-moon {
+  position: relative;
+}
+
+.crescent-moon::before {
+  content: '🌙';
+  font-size: 2rem;
+  opacity: 0.8;
+}
+
+/* Animations */
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-slide-up {
+  animation: slide-up 0.6s ease-out;
+}
+
+@keyframes pulse-glow {
+  0%, 100% {
+    box-shadow: 0 0 30px rgba(212, 175, 55, 0.4), 0 0 60px rgba(212, 175, 55, 0.2);
+  }
+  50% {
+    box-shadow: 0 0 40px rgba(212, 175, 55, 0.6), 0 0 80px rgba(212, 175, 55, 0.3);
+  }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.8s ease-out;
+}
+
+.animate-slide-up {
+  animation: slide-up 0.6s ease-out;
+}
+
+/* Smooth scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-islamic-beige-dark);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-islamic-emerald);
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-islamic-emerald-light);
+}
+
+/* Loading spinner */
+.spinner {
+  width: 50px;
+  height: 50px;
+  border: 4px solid rgba(15, 61, 46, 0.1);
+  border-top-color: var(--color-islamic-gold);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Typography */
+.font-arabic {
+  font-family: var(--font-family-arabic);
+}
+
+.font-body {
+  font-family: var(--font-family-body);
+}
+
+/* Utility classes */
+.text-islamic-emerald {
+  color: var(--color-islamic-emerald);
+}
+
+.text-islamic-gold {
+  color: var(--color-islamic-gold);
+}
+
+.text-islamic-navy {
+  color: var(--color-islamic-navy);
+}
+
+.bg-islamic-emerald {
+  background-color: var(--color-islamic-emerald);
+}
+
+.bg-islamic-gold {
+  background-color: var(--color-islamic-gold);
+}
+
+.bg-islamic-beige {
+  background-color: var(--color-islamic-beige);
+}
+
+.border-islamic-emerald {
+  border-color: var(--color-islamic-emerald);
+}
+
+.border-islamic-gold {
+  border-color: var(--color-islamic-gold);
+}
