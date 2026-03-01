@@ -1,10 +1,50 @@
 import axios from 'axios';
 
-// Always use Render backend (deployed on Render)
-// Change to 'http://localhost:5000' if running backend locally
-const API_URL = 'https://ramzan-tracker.onrender.com';
+// Production backend URL (Render)
+const PRODUCTION_API_URL = 'https://ramzan-tracker.onrender.com';
 
+// Development backend URL (local)
+const DEVELOPMENT_API_URL = 'http://localhost:5000';
+
+// Determine API URL based on environment
+// In Vite: import.meta.env.MODE is 'production' or 'development'
+// In production (Vercel), use Render backend
+// In development (localhost), use local backend or Render (your choice)
+const API_URL = import.meta.env.MODE === 'production' 
+  ? PRODUCTION_API_URL 
+  : PRODUCTION_API_URL; // Change to DEVELOPMENT_API_URL if running backend locally
+
+console.log('🌐 API Configuration:');
+console.log('- Mode:', import.meta.env.MODE);
+console.log('- API URL:', API_URL);
+
+// Set axios defaults
 axios.defaults.baseURL = API_URL;
+axios.defaults.headers.common['Content-Type'] = 'application/json';
+
+// Add request interceptor for debugging
+axios.interceptors.request.use(
+  (config) => {
+    console.log(`📤 ${config.method?.toUpperCase()} ${config.url}`);
+    return config;
+  },
+  (error) => {
+    console.error('❌ Request Error:', error);
+    return Promise.reject(error);
+  }
+);
+
+// Add response interceptor for debugging
+axios.interceptors.response.use(
+  (response) => {
+    console.log(`✅ ${response.config.method?.toUpperCase()} ${response.config.url} - ${response.status}`);
+    return response;
+  },
+  (error) => {
+    console.error('❌ Response Error:', error.response?.status, error.response?.data || error.message);
+    return Promise.reject(error);
+  }
+);
 
 export const api = {
   // Auth
