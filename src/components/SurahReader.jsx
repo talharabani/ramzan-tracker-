@@ -4,6 +4,7 @@ import { getSurahByNumber } from '../services/islamicApi';
 const SurahReader = ({ surahNumber, surahName, onClose }) => {
   const [surahData, setSurahData] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const versesPerPage = 10;
 
@@ -13,11 +14,17 @@ const SurahReader = ({ surahNumber, surahName, onClose }) => {
 
   const fetchSurah = async () => {
     setLoading(true);
+    setError(null);
     try {
       const data = await getSurahByNumber(surahNumber);
-      setSurahData(data);
+      if (data) {
+        setSurahData(data);
+      } else {
+        setError('Failed to load Surah. Please try again.');
+      }
     } catch (error) {
       console.error('Error fetching surah:', error);
+      setError('Failed to load Surah. Please check your internet connection.');
     } finally {
       setLoading(false);
     }
@@ -27,8 +34,38 @@ const SurahReader = ({ surahNumber, surahName, onClose }) => {
     return (
       <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
         <div className="islamic-card max-w-4xl w-full">
-          <div className="flex justify-center py-12">
-            <div className="spinner"></div>
+          <div className="flex flex-col items-center justify-center py-12">
+            <div className="spinner mb-4"></div>
+            <p className="text-islamic-navy font-medium">Loading {surahName}...</p>
+            <p className="text-sm text-gray-600 mt-2">Please wait while we fetch the verses</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div className="islamic-card max-w-4xl w-full">
+          <div className="flex flex-col items-center justify-center py-12">
+            <div className="text-6xl mb-4">❌</div>
+            <p className="text-islamic-navy font-bold text-xl mb-2">Error Loading Surah</p>
+            <p className="text-gray-600 mb-6">{error}</p>
+            <div className="flex gap-3">
+              <button
+                onClick={fetchSurah}
+                className="px-6 py-3 rounded-xl bg-islamic-emerald text-white font-bold hover:bg-islamic-emerald-light transition-colors"
+              >
+                🔄 Try Again
+              </button>
+              <button
+                onClick={onClose}
+                className="px-6 py-3 rounded-xl bg-gray-500 text-white font-bold hover:bg-gray-600 transition-colors"
+              >
+                Close
+              </button>
+            </div>
           </div>
         </div>
       </div>

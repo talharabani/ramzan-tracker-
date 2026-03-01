@@ -155,25 +155,35 @@ export const getUserLocation = () => {
   });
 };
 
-// Get Surah by number with translation
+// Get Surah by number with Arabic text and English translation
 export const getSurahByNumber = async (surahNumber) => {
   try {
-    const response = await axios.get(`http://api.alquran.cloud/v1/surah/${surahNumber}/en.asad`);
+    // Fetch Arabic text
+    const arabicResponse = await axios.get(`http://api.alquran.cloud/v1/surah/${surahNumber}`);
     
-    if (response.data.code === 200 && response.data.data) {
+    // Fetch English translation
+    const translationResponse = await axios.get(`http://api.alquran.cloud/v1/surah/${surahNumber}/en.asad`);
+    
+    if (arabicResponse.data.code === 200 && translationResponse.data.code === 200) {
+      const arabicData = arabicResponse.data.data;
+      const translationData = translationResponse.data.data;
+      
+      // Combine Arabic and translation
+      const ayahs = arabicData.ayahs.map((ayah, index) => ({
+        number: ayah.number,
+        numberInSurah: ayah.numberInSurah,
+        text: ayah.text, // Arabic text
+        translation: translationData.ayahs[index]?.text || '' // English translation
+      }));
+      
       return {
-        number: response.data.data.number,
-        name: response.data.data.name,
-        englishName: response.data.data.englishName,
-        englishNameTranslation: response.data.data.englishNameTranslation,
-        numberOfAyahs: response.data.data.numberOfAyahs,
-        revelationType: response.data.data.revelationType,
-        ayahs: response.data.data.ayahs.map(ayah => ({
-          number: ayah.number,
-          numberInSurah: ayah.numberInSurah,
-          text: ayah.text,
-          translation: ayah.text
-        }))
+        number: arabicData.number,
+        name: arabicData.name,
+        englishName: arabicData.englishName,
+        englishNameTranslation: arabicData.englishNameTranslation,
+        numberOfAyahs: arabicData.numberOfAyahs,
+        revelationType: arabicData.revelationType,
+        ayahs: ayahs
       };
     }
     return null;
@@ -183,20 +193,3 @@ export const getSurahByNumber = async (surahNumber) => {
   }
 };
 
-// Get Arabic text for a Surah
-export const getSurahArabic = async (surahNumber) => {
-  try {
-    const response = await axios.get(`http://api.alquran.cloud/v1/surah/${surahNumber}`);
-    
-    if (response.data.code === 200 && response.data.data) {
-      return data.data.ayahs.map(ayah => ({
-        numberInSurah: ayah.numberInSurah,
-        text: ayah.text
-      }));
-    }
-    return null;
-  } catch (error) {
-    console.error('Error fetching Arabic surah:', error);
-    return null;
-  }
-};
