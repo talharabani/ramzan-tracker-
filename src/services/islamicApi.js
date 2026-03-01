@@ -158,11 +158,15 @@ export const getUserLocation = () => {
 // Get Surah by number with Arabic text and English translation
 export const getSurahByNumber = async (surahNumber) => {
   try {
+    console.log(`Fetching Surah ${surahNumber}...`);
+    
     // Fetch Arabic text
-    const arabicResponse = await axios.get(`http://api.alquran.cloud/v1/surah/${surahNumber}`);
+    const arabicResponse = await axios.get(`https://api.alquran.cloud/v1/surah/${surahNumber}`);
+    console.log('Arabic response:', arabicResponse.data.code);
     
     // Fetch English translation
-    const translationResponse = await axios.get(`http://api.alquran.cloud/v1/surah/${surahNumber}/en.asad`);
+    const translationResponse = await axios.get(`https://api.alquran.cloud/v1/surah/${surahNumber}/en.asad`);
+    console.log('Translation response:', translationResponse.data.code);
     
     if (arabicResponse.data.code === 200 && translationResponse.data.code === 200) {
       const arabicData = arabicResponse.data.data;
@@ -176,6 +180,8 @@ export const getSurahByNumber = async (surahNumber) => {
         translation: translationData.ayahs[index]?.text || '' // English translation
       }));
       
+      console.log(`Successfully loaded ${ayahs.length} verses`);
+      
       return {
         number: arabicData.number,
         name: arabicData.name,
@@ -186,9 +192,16 @@ export const getSurahByNumber = async (surahNumber) => {
         ayahs: ayahs
       };
     }
+    
+    console.error('API returned non-200 status');
     return null;
   } catch (error) {
     console.error('Error fetching surah:', error);
+    console.error('Error details:', error.message);
+    if (error.response) {
+      console.error('Response status:', error.response.status);
+      console.error('Response data:', error.response.data);
+    }
     return null;
   }
 };
