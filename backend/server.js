@@ -20,15 +20,15 @@ app.use(cors());
 app.use(express.json());
 
 // Database Connection
-mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/ramadan-tracker', {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-})
+mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/ramadan-tracker')
   .then(() => {
     console.log('✅ MongoDB Connected');
     seedQuizzes(); // Seed default quizzes
   })
-  .catch(err => console.error('❌ MongoDB Connection Error:', err));
+  .catch(err => {
+    console.error('❌ MongoDB Connection Error:', err);
+    console.error('Error details:', err.message);
+  });
 
 // Routes
 app.use('/api/auth', authRoutes);

@@ -9,6 +9,8 @@ export const register = async (req, res) => {
   try {
     const { fullName, email, password } = req.body;
 
+    console.log('Registration attempt:', { fullName, email });
+
     if (!fullName || !email || !password) {
       return res.status(400).json({ message: 'Please provide all required fields' });
     }
@@ -19,6 +21,8 @@ export const register = async (req, res) => {
     }
 
     const user = await User.create({ fullName, email, password });
+
+    console.log('User created successfully:', user._id);
 
     res.status(201).json({
       _id: user._id,
@@ -31,13 +35,19 @@ export const register = async (req, res) => {
     });
   } catch (error) {
     console.error('Register error:', error);
-    res.status(500).json({ message: 'Server error during registration' });
+    console.error('Error stack:', error.stack);
+    res.status(500).json({ 
+      message: 'Server error during registration',
+      error: process.env.NODE_ENV === 'development' ? error.message : undefined
+    });
   }
 };
 
 export const login = async (req, res) => {
   try {
     const { email, password } = req.body;
+
+    console.log('Login attempt:', { email });
 
     if (!email || !password) {
       return res.status(400).json({ message: 'Please provide email and password' });
@@ -47,6 +57,8 @@ export const login = async (req, res) => {
     if (!user || !(await user.comparePassword(password))) {
       return res.status(401).json({ message: 'Invalid email or password' });
     }
+
+    console.log('Login successful:', user._id);
 
     res.json({
       _id: user._id,
@@ -59,6 +71,10 @@ export const login = async (req, res) => {
     });
   } catch (error) {
     console.error('Login error:', error);
-    res.status(500).json({ message: 'Server error during login' });
+    console.error('Error stack:', error.stack);
+    res.status(500).json({ 
+      message: 'Server error during login',
+      error: process.env.NODE_ENV === 'development' ? error.message : undefined
+    });
   }
 };
