@@ -156,47 +156,44 @@ export const getUserLocation = () => {
 };
 
 // Get Surah by number with Arabic text and English translation
+// Uses backend API to bypass CORS issues
 export const getSurahByNumber = async (surahNumber) => {
   try {
-    console.log(`Fetching Surah ${surahNumber}...`);
+    console.log(`Fetching Surah ${surahNumber} from backend...`);
     
-    // Fetch Arabic text
-    const arabicResponse = await axios.get(`https://api.alquran.cloud/v1/surah/${surahNumber}`);
-    console.log('Arabic response:', arabicResponse.data.code);
+    // Call our backend API instead of external API
+    const response = await axios.get(`/api/islamic/surah/${surahNumber}`);
     
-    // Fetch English translation
-    const translationResponse = await axios.get(`https://api.alquran.cloud/v1/surah/${surahNumber}/en.asad`);
-    console.log('Translation response:', translationResponse.data.code);
+    console.log('Backend response:', response.data);
     
-    if (arabicResponse.data.code === 200 && translationResponse.data.code === 200) {
-      const arabicData = arabicResponse.data.data;
-      const translationData = translationResponse.data.data;
+    if (response.data.success && response.data.data) {
+      const surahData = response.data.data;
       
-      // Combine Arabic and translation
-      const ayahs = arabicData.ayahs.map((ayah, index) => ({
+      // Transform backend response to match frontend expectations
+      const ayahs = surahData.ayahs.map((ayah) => ({
         number: ayah.number,
-        numberInSurah: ayah.numberInSurah,
-        text: ayah.text, // Arabic text
-        translation: translationData.ayahs[index]?.text || '' // English translation
+        numberInSurah: ayah.number,
+        text: ayah.arabic, // Arabic text
+        translation: ayah.translation // English translation
       }));
       
       console.log(`Successfully loaded ${ayahs.length} verses`);
       
       return {
-        number: arabicData.number,
-        name: arabicData.name,
-        englishName: arabicData.englishName,
-        englishNameTranslation: arabicData.englishNameTranslation,
-        numberOfAyahs: arabicData.numberOfAyahs,
-        revelationType: arabicData.revelationType,
+        number: surahData.number,
+        name: surahData.arabicName,
+        englishName: surahData.name,
+        englishNameTranslation: surahData.englishNameTranslation,
+        numberOfAyahs: surahData.numberOfAyahs,
+        revelationType: surahData.revelationType,
         ayahs: ayahs
       };
     }
     
-    console.error('API returned non-200 status');
+    console.error('Backend returned unsuccessful response');
     return null;
   } catch (error) {
-    console.error('Error fetching surah:', error);
+    console.error('Error fetching surah from backend:', error);
     console.error('Error details:', error.message);
     if (error.response) {
       console.error('Response status:', error.response.status);
