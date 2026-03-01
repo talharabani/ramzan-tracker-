@@ -15,14 +15,31 @@ dotenv.config();
 
 const app = express();
 
-// CORS Configuration - Allow Vercel frontend
+// CORS Configuration - Allow all Vercel deployments
 const corsOptions = {
-  origin: [
-    'http://localhost:5173',
-    'http://localhost:5174',
-    'https://ramzan-tracker.vercel.app',
-    'https://ramzan-tracker-*.vercel.app', // Allow all Vercel preview deployments
-  ],
+  origin: function (origin, callback) {
+    // Allow requests with no origin (like mobile apps or curl requests)
+    if (!origin) return callback(null, true);
+    
+    // Allow localhost for development
+    if (origin.includes('localhost')) return callback(null, true);
+    
+    // Allow all Vercel deployments
+    if (origin.includes('vercel.app')) return callback(null, true);
+    
+    // Allow specific domains
+    const allowedOrigins = [
+      'https://ramzan-tracker.vercel.app',
+      'https://ramzan-tracker-lime.vercel.app',
+    ];
+    
+    if (allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    }
+    
+    // Reject other origins
+    callback(new Error('Not allowed by CORS'));
+  },
   credentials: true,
   optionsSuccessStatus: 200
 };
