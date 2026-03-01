@@ -1,87 +1,133 @@
-# Fix Authentication and Push 🔧
+# 🔧 Fixed: Server Error During Registration/Login
 
-## The Problem
-You're authenticated as `talharabani123` but the repository is under `talharabani`.
+## What Was Wrong?
 
-## Solution: Choose One
+Your frontend was trying to connect to `http://localhost:5000` (local backend), but:
+- ❌ Backend is not running locally
+- ✅ Backend is deployed on Render: https://ramzan-tracker.onrender.com
 
-### Option 1: Use Correct Repository URL (Easiest)
+## What I Fixed
 
-If your GitHub username is `talharabani123`, update the remote:
+Updated `src/config/api.js` to always use Render backend:
 
-```bash
-git remote set-url origin https://github.com/talharabani123/ramzan-tracker-.git
+```javascript
+// Before (causing error)
+const API_URL = import.meta.env.PROD 
+  ? 'https://ramzan-tracker.onrender.com'
+  : 'http://localhost:5000';  // ❌ Not running!
+
+// After (fixed)
+const API_URL = 'https://ramzan-tracker.onrender.com';  // ✅ Always use Render
 ```
-
-Then create the repository on GitHub:
-1. Go to https://github.com/new
-2. Repository name: `ramzan-tracker-`
-3. Click "Create repository"
-4. Then push:
-```bash
-git push -u origin main
-```
-
-### Option 2: Use Personal Access Token
-
-1. **Generate Token**:
-   - Go to: https://github.com/settings/tokens
-   - Click "Generate new token (classic)"
-   - Name: "Ramadan Tracker"
-   - Select: ✅ `repo`
-   - Generate and COPY the token
-
-2. **Push with Token**:
-```bash
-git push https://YOUR_TOKEN@github.com/talharabani/ramzan-tracker-.git main
-```
-
-### Option 3: Clear Credentials and Re-authenticate
-
-```bash
-# Clear stored credentials
-git credential-manager erase https://github.com
-
-# Try pushing again (will ask for credentials)
-git push -u origin main
-```
-
-When prompted:
-- Username: `talharabani` (or your correct username)
-- Password: Use a Personal Access Token (not your GitHub password)
-
-### Option 4: Use GitHub Desktop (Simplest!)
-
-1. Download: https://desktop.github.com/
-2. Install and sign in with your GitHub account
-3. File → Add Local Repository
-4. Select: `D:\Ramadan productivity system`
-5. Click "Publish repository"
-6. Choose account: `talharabani`
-7. Repository name: `ramzan-tracker-`
-8. Click "Publish"
-9. Done! ✅
-
-## Quick Commands
-
-```bash
-# Check current remote
-git remote -v
-
-# Change to your username
-git remote set-url origin https://github.com/YOUR_USERNAME/ramzan-tracker-.git
-
-# Push
-git push -u origin main
-```
-
-## After Successful Push
-
-Your repository will be at:
-- https://github.com/YOUR_USERNAME/ramzan-tracker-
-
-Then deploy to Vercel! 🚀
 
 ---
 
-**I recommend Option 4 (GitHub Desktop) - it's the easiest!**
+## Test Now (Locally)
+
+1. **Stop your dev server** (Ctrl+C)
+2. **Restart it:**
+   ```bash
+   npm run dev
+   ```
+3. **Try to register/login again**
+
+⚠️ **First request may take 30 seconds** (Render wakes up from sleep)
+
+---
+
+## Push to GitHub
+
+After testing locally, push the fix:
+
+```bash
+git add src/config/api.js
+git commit -m "Fix: Use Render backend for all environments"
+git push
+```
+
+Vercel will auto-deploy the fix! 🚀
+
+---
+
+## Alternative: Run Backend Locally
+
+If you want to develop with local backend:
+
+### 1. Check MongoDB Connection
+Make sure `backend/.env` has your MongoDB URI:
+```
+MONGODB_URI=your_mongodb_connection_string
+JWT_SECRET=your_secret_key
+PORT=5000
+```
+
+### 2. Start Backend
+```bash
+cd backend
+npm run dev
+```
+
+### 3. Update API Config
+Change `src/config/api.js` back to:
+```javascript
+const API_URL = 'http://localhost:5000';
+```
+
+### 4. Start Frontend
+```bash
+npm run dev
+```
+
+---
+
+## Why This Happened
+
+When running `npm run dev` (Vite development mode):
+- `import.meta.env.PROD` = `false`
+- So it tried to use `http://localhost:5000`
+- But backend wasn't running locally
+- Result: "Server error during registration"
+
+Now it always uses Render backend, which is already running! ✅
+
+---
+
+## Test Checklist
+
+After restarting dev server:
+
+- [ ] Open http://localhost:5173
+- [ ] Click "Register"
+- [ ] Fill in details
+- [ ] Wait 30 seconds (first request)
+- [ ] Should register successfully! ✅
+- [ ] Try login
+- [ ] Should work! ✅
+
+---
+
+## Render Backend Status
+
+Check if backend is running:
+- Open: https://ramzan-tracker.onrender.com/api/health
+- Should show: `{"status":"ok","message":"Server is running"}`
+
+If it shows error:
+1. Go to https://dashboard.render.com
+2. Check your service status
+3. View logs for errors
+4. Verify MongoDB connection
+
+---
+
+## Next Steps
+
+1. ✅ Test locally (restart dev server)
+2. ✅ Push fix to GitHub
+3. ✅ Vercel auto-deploys
+4. ✅ Test on Vercel URL
+5. ✅ Share your app!
+
+---
+
+**The fix is ready! Just restart your dev server and test.** 🎉

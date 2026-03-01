@@ -1,9 +1,8 @@
 import axios from 'axios';
 
-// Use Render backend URL in production, localhost in development
-const API_URL = import.meta.env.PROD 
-  ? 'https://ramzan-tracker.onrender.com'
-  : 'http://localhost:5000';
+// Always use Render backend (deployed on Render)
+// Change to 'http://localhost:5000' if running backend locally
+const API_URL = 'https://ramzan-tracker.onrender.com';
 
 axios.defaults.baseURL = API_URL;
 
